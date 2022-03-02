@@ -1,0 +1,38 @@
+plugins {
+    //using old gradle version, that is why not using oldest spring boot release
+    id 'org.springframework.boot' version '2.4.0'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group 'com.interviews'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //web-flux dependencies
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux'
+
+    //db dependencies
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+    implementation group: 'com.h2database', name: 'h2', version: '2.1.210'
+
+
+    //development utils
+    implementation group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.4.2.Final'
+
+    compileOnly group: 'org.projectlombok', name: 'lombok'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+}
