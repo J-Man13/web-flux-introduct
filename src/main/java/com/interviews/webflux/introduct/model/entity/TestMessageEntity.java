@@ -3,23 +3,21 @@ package com.interviews.webflux.introduct.model.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "testMessage")
+@Table("TEST_MESSAGE")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class TestMessageEntity {
     @Id
-    @Column(name = "id")
     private Integer id;
-
-    @Column(name = "message", nullable = false)
+    @Column
     private String message;
-
-    @Column(name = "created", nullable = false)
+    @Column
     private LocalDateTime created;
 }
