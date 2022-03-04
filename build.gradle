@@ -7,13 +7,56 @@ plugins {
 
 group 'com.interviews'
 version '1.0-SNAPSHOT'
+sourceCompatibility = '11'
 
-sourceCompatibility = 11
-
+// tag::configurations[]
+configurations {
+    jaxb
+}
+// end::configurations[]
 
 repositories {
     mavenCentral()
 }
+
+// tag::wsdl[]
+task genJaxb {
+    ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+    ext.classesDir = "${buildDir}/classes/jaxb"
+    ext.schema = "src/main/resources/introduct-working-test.wsdl"
+
+    outputs.dir classesDir
+
+    doLast() {
+        project.ant {
+            taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
+                    classpath: configurations.jaxb.asPath
+            mkdir(dir: sourcesDir)
+            mkdir(dir: classesDir)
+
+            xjc(destdir: sourcesDir, schema: schema,
+                    package: "wsdl.generated.client") {
+                arg(value: "-wsdl")
+                produces(dir: sourcesDir, includes: "**/*.java")
+            }
+
+            javac(destdir: classesDir, source: 11, target: 11, debug: true,
+                    debugLevel: "lines,vars,source",
+                    classpath: configurations.jaxb.asPath) {
+                src(path: sourcesDir)
+                include(name: "**/*.java")
+                include(name: "*.java")
+            }
+
+            copy(todir: classesDir) {
+                fileset(dir: sourcesDir, erroronmissingdir: false) {
+                    exclude(name: "**/*.java")
+                }
+            }
+        }
+    }
+}
+// end::wsdl[]
 
 dependencies {
     //web-flux dependencies
@@ -23,6 +66,16 @@ dependencies {
     implementation group:'org.springframework.boot', name: 'spring-boot-starter-data-r2dbc'
     runtimeOnly 'io.r2dbc:r2dbc-h2'
     runtimeOnly 'com.h2database:h2'
+
+    //dependencies for soap consumer
+    implementation ('org.springframework.boot:spring-boot-starter-web-services') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    }
+    implementation 'org.springframework.ws:spring-ws-core'
+    implementation 'org.glassfish.jaxb:jaxb-runtime'
+    implementation(files(genJaxb.classesDir).builtBy(genJaxb))
+    jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
+    implementation 'wsdl4j:wsdl4j'
 
     //development utils
     compileOnly group: 'org.projectlombok', name: 'lombok'

@@ -9,5 +9,6 @@ import org.mapstruct.Mapper;
 public interface TestMessageMapStruct {
     TestMessage testMessageDtoToTestMessage(TestMessageDto testMessageDto);
     TestMessageDto testMessageToTestMessageDto(TestMessage testMessage);
+    TestMessageEntity testMessageToTestMessageEntity(TestMessage testMessage);
     TestMessage testMessageEntityToTestMessage(TestMessageEntity testMessageEntity);
 }

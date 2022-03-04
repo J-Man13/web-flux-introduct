@@ -14,4 +14,7 @@ public class TestMessage {
     private String message;
     private LocalDateTime created;
 
+    public TestMessage(String message) {
+        this.message = message;
+    }
 }

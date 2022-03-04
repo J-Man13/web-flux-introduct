@@ -5,6 +5,9 @@ import com.interviews.webflux.introduct.model.business.TestMessage;
 import com.interviews.webflux.introduct.repository.TestMessageRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
 
 @Service
 public class TestMessageDbService implements TestMessageService{
@@ -22,6 +25,13 @@ public class TestMessageDbService implements TestMessageService{
     public Flux<TestMessage> findAllTestMessages() {
         return testMessageRepository.findAll()
                 .doOnNext(System.out::println)
+                .map(testMessageMapStruct::testMessageEntityToTestMessage);
+    }
+
+    @Override
+    public Mono<TestMessage> saveTestMessage(TestMessage testMessage) {
+        testMessage.setCreated(LocalDateTime.now());
+        return testMessageRepository.save(testMessageMapStruct.testMessageToTestMessageEntity(testMessage))
                 .map(testMessageMapStruct::testMessageEntityToTestMessage);
     }
 }
